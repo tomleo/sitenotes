@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Notes ~ Django</title>
+    <link href='http://fonts.googleapis.com/css?family=Domine:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="/css/normalize.css" />
+    <link rel="stylesheet" href="/css/foundation.css" />
+    <link rel="stylesheet" type="text/css" href="/css/pygments.css" />
+    
+</head>
+
+<body>
+    <div class="row">
+        <div class="large-12 columns">
+            <h1><a href="/">Technical Notes</a></h1>
+    <h1>Django</h1>
+
+    <div class="section" id="django-orm">
+<h1>Django ORM</h1>
+<p>pet_set is a lazy object that only makes a call to the dtabase when you begin
+to iterate over it. When the queryset is evaluated it will caches the results
+so latter calls to pet_set will not also call the database.</p>
+<div class="highlight"><pre><span class="n">pet_set</span> <span class="o">=</span> <span class="n">Pet</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">species</span><span class="o">=</span><span class="s">&quot;Dog&quot;</span><span class="p">)</span>
+<span class="c"># The query is executed and cached.</span>
+<span class="k">for</span> <span class="n">pet</span> <span class="ow">in</span> <span class="n">pet_set</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">pet</span><span class="o">.</span><span class="n">first_name</span><span class="p">)</span>
+<span class="c"># The cache is used for subsequent iteration.</span>
+<span class="k">for</span> <span class="n">pet</span> <span class="ow">in</span> <span class="n">pet_set</span><span class="p">:</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">pet</span><span class="o">.</span><span class="n">last_name</span><span class="p">)</span>
+</pre></div>
+<p>The &quot;if&quot; statement will evaluate the queryset and cache the results so that
+only one call to the database is made.</p>
+<p>You can avoid evaluating and potentially
+caching a largy queryset by calling queryset.exists() which just checks if at
+least one row in the database matches.</p>
+<div class="highlight"><pre><span class="n">restaurant_set</span> <span class="o">=</span> <span class="n">Restaurant</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">cuisine</span><span class="o">=</span><span class="s">&quot;Indian&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">restaurant_set</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;Found some resturaunts!&quot;</span><span class="p">)</span>
+
+<span class="c"># The `if` statement evaluates the queryset.</span>
+<span class="k">if</span> <span class="n">restaurant_set</span><span class="p">:</span>
+    <span class="c"># The cache is used for subsequent iteration.</span>
+    <span class="k">for</span> <span class="n">restaurant</span> <span class="ow">in</span> <span class="n">restaurant_set</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">restaurant</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+<p>you can evaluate a queryset without caching the resutls by calling iterator()</p>
+<div class="highlight"><pre><span class="n">pet_set</span> <span class="o">=</span> <span class="n">Pet</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">pet</span> <span class="ow">in</span> <span class="n">pet_set</span><span class="o">.</span><span class="n">iterator</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">pet</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+<p>iterate over large dataset example</p>
+<div class="highlight"><pre><span class="n">pet_set</span> <span class="o">=</span> <span class="n">Pet</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="n">pet_iterator</span> <span class="o">=</span> <span class="n">pet_set</span><span class="o">.</span><span class="n">iterator</span><span class="p">()</span>
+<span class="c">#Look at first item in the iterator</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">pet_one</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">pet_iterator</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="c">#No rows found, so no pets in the set</span>
+    <span class="k">pass</span>
+<span class="k">else</span><span class="p">:</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+    <span class="k">for</span> <span class="n">pet</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">([</span><span class="n">pet_one</span><span class="p">],</span> <span class="n">pet_set</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="n">pet</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+<p>via <a class="reference external" href="http://blog.etianen.com/blog/2013/06/08/django-querysets/">http://blog.etianen.com/blog/2013/06/08/django-querysets/</a></p>
+</div>
+<div class="section" id="model-forms-with-m2m-data">
+<h1>Model Forms with m2m Data</h1>
+<p>If a m2m field exists in the form, but is not rendered in the template then all m2m data for a given instance will be lost.
+For example if you fill out a <em>DogForm</em> then add toys via the <em>DogToyForm</em> then go back and edit <em>DogForm</em> then all his toys will be lost!</p>
+<div class="highlight"><pre><span class="c">#in models.py</span>
+<span class="k">class</span> <span class="nc">DogToy</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Dog</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">toys</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="s">&#39;DogToy&#39;</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c">#in forms.py</span>
+<span class="k">class</span> <span class="nc">DogForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">Dog</span>
+
+<span class="k">class</span> <span class="nc">DogToyForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">DogToys</span>
+
+
+<span class="c">#in template</span>
+<span class="o">&lt;</span><span class="n">form</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;.&quot;</span> <span class="n">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span><span class="o">&gt;</span>
+    <span class="p">{</span><span class="o">%</span> <span class="n">csrf_token</span> <span class="o">%</span><span class="p">}</span>
+    <span class="p">{{</span> <span class="n">form</span><span class="o">.</span><span class="n">color</span> <span class="p">}}</span>
+    <span class="o">&lt;</span><span class="nb">input</span> <span class="nb">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span> <span class="o">/&gt;</span>
+<span class="o">&lt;/</span><span class="n">form</span><span class="o">&gt;</span>
+</pre></div>
+<p>So if you wish to allow a dogs information to be edited in a form that does not include photos it is import that you exclude forms that
+will not be rendered in the template. In the example above the <em>DogToyForm</em> should be changed to the following</p>
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">DogToyForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">ModelForm</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">DogToys</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;toys&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+
+
+        <hr />
+        <footer>
+            <p>Last generated: Sun Jun 16 21:10:37 2013.</p>
+        </footer>
+
+         </div>
+    </div>
+</body>
+
+</html>

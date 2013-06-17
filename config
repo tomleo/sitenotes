@@ -1,0 +1,5 @@
+site_title: Notes
+author: Thomas Leo
+url_include_index: True
+url_pattern: "/{category}/{slug}/{page}/index.html"
+relative_urls: False
