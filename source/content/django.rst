@@ -1,5 +1,4 @@
 title: Django
-tags: [django]
 ---
 
 Django ORM
