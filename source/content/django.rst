@@ -108,3 +108,67 @@ will not be rendered in the template. In the example above the *DogToyForm* shou
             model = DogToys
             exclude = ('toys')
 
+via http://blog.etianen.com/blog/2013/06/08/django-querysets/
+
+Coding Conventions
+------------------
+
+Ordering of imports
++++++++++++++++++++
+
+.. sourcecode:: python
+
+    # Stdlib imports
+    # Core Django imports
+    # Third-party app imports
+    # Imports from your apps
+
+Imports of 'test' package
++++++++++++++++++++++++++
+
+.. sourcecode:: python
+
+    #test/views.py
+    from .models import Test
+    from .forms import TestForm
+
+
+Naming Conventions
+++++++++++++++++++
+
+app names should be lowercase single words like "jobs", "messages", "cars" 
+(they should be plural versions of apaps main model)
+
+
+Settings
+++++++++
+
+It is common to see a production and local settings file however I think that 
+it can be simplified by making your local development as close to production
+as possible. So everything required to run the project exists in base.py and
+very little if any logic is contains in local.py. 
+
+base.py
+    common settings for local and production environment
+
+test.py
+    settings for running tests
+
+local.py
+    local packages like debug toolbar
+
+.. sourcecode:: python
+
+    #settings/local.py
+    from .base import *
+    DEBUG = True # do I need this, couldn't I just set TEMPLATE_DEBUG
+    TEMPLATE_DEBUG = DEBUG
+
+Sensitive information should be stored in environment variables, they can be
+loaded into via your virtual environments activate script.
+
+.. sourcecode:: shell
+
+    # standard generated code here
+    export SOME_SECRET_KEY=password-1-2-3
+
