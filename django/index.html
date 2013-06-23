@@ -103,12 +103,61 @@ will not be rendered in the template. In the example above the <em>DogToyForm</e
         <span class="n">model</span> <span class="o">=</span> <span class="n">DogToys</span>
         <span class="n">exclude</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;toys&#39;</span><span class="p">)</span>
 </pre></div>
+<p>via <a class="reference external" href="http://blog.etianen.com/blog/2013/06/08/django-querysets/">http://blog.etianen.com/blog/2013/06/08/django-querysets/</a></p>
+</div>
+<div class="section" id="coding-conventions">
+<h1>Coding Conventions</h1>
+<div class="section" id="ordering-of-imports">
+<h2>Ordering of imports</h2>
+<div class="highlight"><pre><span class="c"># Stdlib imports</span>
+<span class="c"># Core Django imports</span>
+<span class="c"># Third-party app imports</span>
+<span class="c"># Imports from your apps</span>
+</pre></div>
+</div>
+<div class="section" id="imports-of-test-package">
+<h2>Imports of 'test' package</h2>
+<div class="highlight"><pre><span class="c">#test/views.py</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Test</span>
+<span class="kn">from</span> <span class="nn">.forms</span> <span class="kn">import</span> <span class="n">TestForm</span>
+</pre></div>
+</div>
+<div class="section" id="naming-conventions">
+<h2>Naming Conventions</h2>
+<p>app names should be lowercase single words like &quot;jobs&quot;, &quot;messages&quot;, &quot;cars&quot;
+(they should be plural versions of apaps main model)</p>
+</div>
+<div class="section" id="settings">
+<h2>Settings</h2>
+<p>It is common to see a production and local settings file however I think that
+it can be simplified by making your local development as close to production
+as possible. So everything required to run the project exists in base.py and
+very little if any logic is contains in local.py.</p>
+<dl class="docutils">
+<dt>base.py</dt>
+<dd>common settings for local and production environment</dd>
+<dt>test.py</dt>
+<dd>settings for running tests</dd>
+<dt>local.py</dt>
+<dd>local packages like debug toolbar</dd>
+</dl>
+<div class="highlight"><pre><span class="c">#settings/local.py</span>
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span> <span class="c"># do I need this, couldn&#39;t I just set TEMPLATE_DEBUG</span>
+<span class="n">TEMPLATE_DEBUG</span> <span class="o">=</span> <span class="n">DEBUG</span>
+</pre></div>
+<p>Sensitive information should be stored in environment variables, they can be
+loaded into via your virtual environments activate script.</p>
+<div class="highlight"><pre># standard generated code here
+export SOME_SECRET_KEY=password-1-2-3
+</pre></div>
+</div>
 </div>
 
 
         <hr />
         <footer>
-            <p>Last generated: Tue Jun 18 18:18:21 2013.</p>
+            <p>Last generated: Sun Jun 23 10:43:46 2013.</p>
         </footer>
 
          </div>
