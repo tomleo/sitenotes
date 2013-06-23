@@ -137,7 +137,7 @@ Naming Conventions
 ++++++++++++++++++
 
 app names should be lowercase single words like "jobs", "messages", "cars" 
-(they should be plural versions of apaps main model)
+(they should be plural versions of an app's main model)
 
 
 Settings
@@ -146,7 +146,7 @@ Settings
 It is common to see a production and local settings file however I think that 
 it can be simplified by making your local development as close to production
 as possible. So everything required to run the project exists in base.py and
-very little if any logic is contains in local.py. 
+very little if any logic is contained in local.py. 
 
 base.py
     common settings for local and production environment
